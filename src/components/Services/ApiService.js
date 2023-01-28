@@ -2,7 +2,7 @@ import axios from "axios";
 import swal from "sweetalert";
 
 const instance = axios.create({
-  baseURL: "http://192.168.25.127:8000",
+  baseURL: "http://192.168.25.118:8000",
 });
 
 instance.interceptors.request.use(

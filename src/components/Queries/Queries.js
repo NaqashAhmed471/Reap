@@ -103,18 +103,18 @@ const Queries = () => {
   return (
     <>
       {/* <div class="content-wrapper"> */}
-      <section class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row mb-2">
+            <div className="col-sm-6">
               <h1>Queries Table</h1>
             </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item">
+            <div className="col-sm-6">
+              <ol className="breadcrumb float-sm-right">
+                <li className="breadcrumb-item">
                   <a href="#">Home</a>
                 </li>
-                <li class="breadcrumb-item active">DataTables</li>
+                <li className="breadcrumb-item active">DataTables</li>
               </ol>
             </div>
           </div>

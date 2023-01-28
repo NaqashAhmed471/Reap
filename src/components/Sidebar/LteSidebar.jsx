@@ -4,7 +4,10 @@ import SidebarList from "./LteSidebarList";
 
 export default function SidebarLte() {
   return (
-    <aside className="main-sidebar sidebar-dark-primary elevation-4">
+    <aside
+      style={{ position: "fixed" }}
+      className="main-sidebar sidebar-dark-primary elevation-4"
+    >
       {/* Sidebar */}
       <div className="sidebar" id="home-sidebar">
         {/* Sidebar user panel (optional) */}

@@ -1,5 +1,7 @@
 import React, { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMobileAndroid } from "@fortawesome/free-solid-svg-icons";
 
 export default function SidebarList() {
   const { pathname } = useLocation();
@@ -38,6 +40,26 @@ export default function SidebarList() {
           <i className="nav-icon fas fa-map" />
           <p>Queries</p>
         </Link>
+      </li>
+      <li className="nav-item has-treeview">
+        <Link className={activeList("/properties")}>
+          <FontAwesomeIcon icon={faMobileAndroid} /> <p>Properties</p>
+          <i className="fas fa-angle-left right"></i>
+        </Link>
+        <ul
+          className="nav nav-treeview"
+          style={{
+            display: "none",
+            cursor: "pointer",
+            color: "white",
+            padding: "0 2rem",
+          }}
+        >
+          <Link to="/properties">
+            <p>Add Properties</p>
+          </Link>
+          {/* <i className="nav-icon fas fa-map" /> */}
+        </ul>
       </li>
       {/* <li className="nav-item">
         <Link to="/map" className={activeList("/map")}>
