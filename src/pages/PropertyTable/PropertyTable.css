@@ -1,0 +1,20 @@
+.section_property_table .upper_content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 25px;
+    margin-bottom: 10px;
+}
+.section_property_table .upper_content  .add_property{
+    background-color: #007bff;
+    color: white;
+    padding: 7px 15px;
+    border: 4px solid transparent;
+    border-radius: 1px;
+}
+.section_property_table .upper_content  .add_property a:hover,a:link,
+a:visited {
+    text-decoration: none;
+    color: white;
+}
+

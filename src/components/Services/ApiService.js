@@ -2,7 +2,7 @@ import axios from "axios";
 import swal from "sweetalert";
 
 const instance = axios.create({
-  baseURL: "http://192.168.25.118:8000",
+  baseURL: "http://51.195.239.118:5566",
 });
 
 instance.interceptors.request.use(
@@ -20,6 +20,7 @@ const ApiService = {
   async get(url) {
     try {
       const res = await instance.get(url);
+      console.log("naqash", res);
       return res;
     } catch (reason) {
       return await swal(`${reason}`, {

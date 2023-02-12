@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faBoxesPacking } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import "./Properties.css";
 
 const influencers = [
@@ -64,6 +65,7 @@ const Properties = () => {
     formManager: "",
     formLettingAgent: "",
   });
+  const navigate = useNavigate();
 
   const handleInfluencerName = (event) => {
     event === "abc"
@@ -134,6 +136,10 @@ const Properties = () => {
       ...base,
       width: "49%",
     }),
+  };
+
+  const handleAddProperty = () => {
+    navigate("/properties");
   };
 
   return (
@@ -546,7 +552,9 @@ const Properties = () => {
               }}
             >
               <button className="btn btn-seconday">Cancel</button>
-              <button className="btn btn-primary">Add Property</button>
+              <button className="btn btn-primary" onClick={handleAddProperty}>
+                Add Property
+              </button>
             </div>
           </div>
         </div>
