@@ -58,6 +58,9 @@ export default function SidebarList() {
           <Link to="/properties">
             <p>Properties</p>
           </Link>
+          <Link to="/certificates">
+            <p>Certificates</p>
+          </Link>
           {/* <i className="nav-icon fas fa-map" /> */}
         </ul>
       </li>

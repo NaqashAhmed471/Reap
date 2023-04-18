@@ -1,0 +1,12 @@
+.search_property {
+    display: flex;
+    flex-direction: column;
+}
+.p-dropdown-panel {
+    z-index: 1050 !important;
+}
+.parent_checkboxes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

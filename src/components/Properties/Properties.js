@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Select, { components } from "react-select";
 import { Button, Modal } from "react-bootstrap";
-import { RiAddLine } from "react-icons/ri";
+import ApiService from "../Services/ApiService";
+// import { RiAddLine } from "react-icons/ri";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faBoxesPacking } from "@fortawesome/free-solid-svg-icons";
+import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
 import "./Properties.css";
 
@@ -29,55 +31,228 @@ const Properties = () => {
   const [showArea, setshowArea] = useState(false);
   const [showProperty, setshowProperty] = useState(false);
   const [showCustomUnit, setshowCustomUnit] = useState(false);
+  const [PropertyTyes, setPropertyTyes] = useState([]);
+  const [PropertyOwner, setPropertyOwner] = useState([]);
+  const [PropertyArea, setPropertyArea] = useState([]);
+  const [PropertyDetails, setPropertyDetails] = useState([]);
+  const [CustomUnit, setCustomUnit] = useState([]);
   const [AreaModalState, setAreaModalState] = useState({
-    areaName: "",
+    area: "",
   });
   const [PropertyModalState, setPropertyModalState] = useState({
-    companyName: "",
-    primaryEmail: "",
-    contactFirstName: "",
-    contactLastName: "",
-    phoneNo: "",
+    partner_name: "",
+    primary_email: "",
+    first_name: "",
+    last_name: "",
+    primary_phone: "",
   });
   const [CustomUnitModalState, setCustomUnitModalState] = useState({
     Name: "",
-    propertyAll: "",
-    propertyResedent: "",
-    propertyCommercial: "",
-    propertyMixed: "",
-    propertyIndustrial: "",
-    propertyHMO: "",
-    propertyLand: "",
-    propertyWater: "",
-    propertyFormland: "",
-    propertyResedentBlock: "",
+    type: "",
   });
   const [FormState, setFormState] = useState({
-    formName: "",
-    formOwner: "",
-    formAddress: "",
-    formPostCode: "",
-    formCity: "",
-    formCountry: "",
-    formArea: "",
+    property_name: "",
+    property_owner: "",
+    address: "",
+    postcode: "",
+    city: "",
+    country: "",
+    property_area: "",
     formUnitRef: "",
     formUnitType: "",
     formManager: "",
     formLettingAgent: "",
+    formCertificateName: "",
   });
   const navigate = useNavigate();
 
+  useEffect(() => {
+    getPropertyTypeList();
+    getPropertyOwnerList();
+    getPropertyAreaList();
+    getPropertyDetailsList();
+    getPropertyUnitList();
+  }, []);
+
+  const getPropertyTypeList = async () => {
+    const resp = await ApiService.get("/emails/Type/");
+    setPropertyTyes(resp.data);
+  };
+
+  const getPropertyOwnerList = async () => {
+    const resp = await ApiService.get("/emails/Owner/");
+    setPropertyOwner(resp.data);
+  };
+
+  const getPropertyAreaList = async () => {
+    const resp = await ApiService.get("/emails/Area/");
+    setPropertyArea(resp.data);
+  };
+
+  const getPropertyDetailsList = async () => {
+    const resp = await ApiService.get("/emails/Details/");
+    setPropertyDetails(resp.data);
+  };
+
+  const getPropertyUnitList = async () => {
+    const resp = await ApiService.get("/emails/Unit/");
+    setCustomUnit(resp.data);
+  };
+
+  //   console.log(
+  //     "PropertyTyes",
+  //     PropertyTyes,
+  //     "PropertyArea",
+  //     PropertyArea,
+  //     "PropertyDetails",
+  //     PropertyDetails,
+  //     "PropertyOwner",
+  //     PropertyOwner
+  //   );
+
+  const updateState = (prop) => {
+    // setFormState({
+    //   ...FormState,
+    //   property_owner: prop.partner_name,
+    // });
+    setshowProperty(true);
+  };
+
+  const updateState1 = (prop) => {
+    // setFormState({
+    //   ...FormState,
+    //   property_area: prop.area,
+    // });
+    setshowArea(true);
+  };
+
+  const changeOptions = (e) => {
+    setFormState({
+      ...FormState,
+      property_owner: e.uuid,
+    });
+  };
+
+  const changeOptionsArea = (e) => {
+    setFormState({
+      ...FormState,
+      property_area: e.uuid,
+    });
+  };
+
+  const changeUnitOwner = (e) => {
+    // setFormState({
+    //   ...FormState,
+    //   property_area: e.area,
+    // });
+    console.log(">>>>>>>");
+  };
+
   const handleInfluencerName = (event) => {
-    event === "abc"
-      ? setshowProperty(true)
-      : event === "xyz"
-      ? setshowArea(true)
+    Object.keys(event).includes("partner_name")
+      ? updateState(event)
+      : Object.keys(event).includes("area")
+      ? updateState1(event)
       : setshowCustomUnit(true);
   };
 
-  const handlePropertyOwner = (e) => {
-    console.log(e);
-    setmodalID("proppertyowner");
+  const handleAddProperty = async () => {
+    const resp = await ApiService.post("/emails/Owner/", PropertyModalState);
+    if (resp.statusText === "Created") {
+      setPropertyOwner([...PropertyOwner, resp.data]);
+      setshowProperty(false);
+      swal(`Property Owner has been Added`, {
+        icon: "success",
+      });
+    }
+  };
+
+  const handleSubmitArea = async () => {
+    const resp = await ApiService.post("/emails/Area/", AreaModalState);
+    if (resp.statusText === "Created") {
+      setPropertyArea([...PropertyArea, resp.data]);
+      setshowArea(false);
+      swal(`Area has been Added`, {
+        icon: "success",
+      });
+    }
+  };
+
+  const handleSubmitCustomUnit = async () => {
+    const resp = await ApiService.post("/emails/Unit/", CustomUnitModalState);
+    if (resp.statusText === "Created") {
+      setCustomUnit([...CustomUnit, resp.data]);
+      setshowCustomUnit(false);
+      swal(`Custom Unit has been Added`, {
+        icon: "success",
+      });
+      setCustomUnitModalState({
+        Name: "",
+        type: "",
+      });
+    }
+  };
+  const handleMainForm = async () => {
+    const resp = await ApiService.post("/emails/Details/", FormState);
+    if (resp.statusText === "Created") {
+      setFormState({
+        property_name: "",
+        property_owner: "",
+        address: "",
+        postcode: "",
+        city: "",
+        country: "",
+        property_area: "",
+        formUnitRef: "",
+        formUnitType: "",
+        formManager: "",
+        formLettingAgent: "",
+        formCertificateName: "",
+      });
+      swal(`Form has been submitted`, {
+        icon: "success",
+      });
+      navigate("/properties");
+    }
+  };
+
+  const handleAreaChange = (e) => {
+    const { id, value } = e.target;
+    setAreaModalState((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+
+  const handleCustomUnitChange = (e) => {
+    const { id, value } = e.target;
+    setCustomUnitModalState((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+  const handleCustomUnitCheck = (e) => {
+    const { id, checked, value } = e.target;
+    setCustomUnitModalState((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setPropertyModalState((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+
+  const handleFormChange = (e) => {
+    const { id, value } = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
   };
 
   const handleCloseArea = () => setshowArea(false);
@@ -86,11 +261,8 @@ const Properties = () => {
   const handleShowArea = () => setshowArea(true);
   const handleShowProperty = () => setshowProperty(true);
 
-  console.log("modalIDmodalID ", modalID);
-
   const ValueContainer = ({ children, ...props }) => {
-    console.log(">>>>>>>>", props.options[0].label);
-
+    console.log("propssssssss", props.options);
     return (
       components.ValueContainer && (
         <components.ValueContainer {...props}>
@@ -99,7 +271,7 @@ const Properties = () => {
               data-toggle="modal"
               data-target="#exampleModalCenter"
               onClick={
-                () => handleInfluencerName(props.options[0].label)
+                () => handleInfluencerName(props.options[0])
                 //   handlePropertyOwner("proppertyowner")
               }
               style={{ margin: "0 1rem", cursor: "pointer" }}
@@ -136,10 +308,6 @@ const Properties = () => {
       ...base,
       width: "49%",
     }),
-  };
-
-  const handleAddProperty = () => {
-    navigate("/properties");
   };
 
   return (
@@ -233,21 +401,23 @@ const Properties = () => {
             <h5>Property Type</h5>
             <span>Choose what best describe your property you are renting</span>
             <div style={{ display: "flex" }}>
-              <div
-                className="card m-2 py-2"
-                style={{ border: "1px solid blue" }}
-              >
+              {PropertyTyes?.map((ite) => (
                 <div
-                  className="card-body"
-                  style={{ display: "flex", flexDirection: "column" }}
+                  className="card m-2 py-2"
+                  style={{ border: "1px solid blue" }}
                 >
-                  <FontAwesomeIcon icon={faBox} />
-                  <h5 style={{ color: "blue" }} className="card-title mx-2">
-                    To let
-                  </h5>
+                  <div
+                    className="card-body"
+                    style={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <FontAwesomeIcon icon={faBox} />
+                    <h5 style={{ color: "blue" }} className="card-title mx-2">
+                      {ite.category_name}
+                    </h5>
+                  </div>
                 </div>
-              </div>
-              <div
+              ))}
+              {/* <div
                 className="card m-2 py-2"
                 style={{ border: "1px solid blue" }}
               >
@@ -267,7 +437,7 @@ const Properties = () => {
                     To let
                   </h5>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -287,21 +457,25 @@ const Properties = () => {
                 <input
                   type="text"
                   className="form-control"
-                  id="exampleFormControlInput1"
+                  id="property_name"
+                  value={FormState.property_name}
+                  onChange={handleFormChange}
                   //placeholder="First Name"
                 />
               </div>
               <div className="col">
                 <label>Property Owner *</label>
                 <Select
-                  options={influencers}
+                  options={PropertyOwner}
                   isMulti={false}
-                  onChange={handleInfluencerName}
-                  //   menuIsOpen={openMenu}
-                  //   onMenuOpen={() => setopenMenu(true)}
-                  //   onMenuClose={() => setopenMenu(false)}
-                  // isSearchable={true}
-                  // placeholder="Add property"
+                  onChange={changeOptions}
+                  //   value={{
+                  //     label: FormState?.property_owner,
+                  //     value: FormState?.property_owner,
+                  //   }}
+                  getOptionLabel={(options) => options.partner_name}
+                  getOptionValue={(options) => options.uuid}
+                  //   placeholder="Add property"
                   components={{ ValueContainer }}
                   classNamePrefix="vyrill"
                   styles={styles}
@@ -325,8 +499,9 @@ const Properties = () => {
                 <input
                   type="text"
                   className="form-control"
-                  id="exampleFormControlInput1"
-                  //placeholder="First Name"
+                  id="address"
+                  value={FormState.address}
+                  onChange={handleFormChange}
                 />
               </div>
               <div className="col">
@@ -334,8 +509,9 @@ const Properties = () => {
                 <input
                   type="text"
                   className="form-control"
-                  id="exampleFormControlInput1"
-                  //placeholder="Last Name"
+                  id="postcode"
+                  value={FormState.postcode}
+                  onChange={handleFormChange}
                 />
               </div>
             </div>
@@ -351,23 +527,25 @@ const Properties = () => {
                 <input
                   type="text"
                   className="form-control"
-                  id="exampleFormControlInput1"
-                  //   placeholder="First Name"
+                  id="city"
+                  value={FormState.city}
+                  onChange={handleFormChange}
                 />
               </div>
               <div className="col">
                 <label>Country *</label>
                 <select
                   className="form-control"
+                  onChange={handleFormChange}
                   //   style={{ width: "49%" }}
-                  name="area"
-                  id="area"
+                  name="country"
+                  id="country"
                 >
                   <option value="">---</option>
-                  <option value="saab">Pakistan</option>
-                  <option value="opel">India</option>
-                  <option value="audi">US</option>
-                  <option value="audi">UK</option>
+                  <option value="Pakistan">Pakistan</option>
+                  <option value="India">India</option>
+                  <option value="US">US</option>
+                  <option value="UK">UK</option>
                 </select>
               </div>
             </div>
@@ -379,37 +557,23 @@ const Properties = () => {
               }}
             >
               <div className="col">
-                <label>Area *</label>{" "}
-                {/* <select
-                  className="form-control"
-                  style={{ width: "49%" }}
-                  name="area"
-                  id="area"
-                >
-                  <option value="volvo">Volvo</option>
-                  <option value="saab" data-icon="glyphicon-glass">
-                    Saab
-                  </option>
-                  <option value="opel">Opel</option>
-                  <option value="audi">Audi</option>
-                </select> */}
+                <label>Area *</label>
                 <Select
-                  options={areaOptions}
+                  options={PropertyArea}
+                  getOptionLabel={(options) => (
+                    <span>
+                      {options.address} {options.area}
+                    </span>
+                  )}
+                  getOptionValue={(options) => options.uuid}
                   isMulti={false}
-                  onChange={handleInfluencerName}
+                  onChange={changeOptionsArea}
                   // isSearchable={true}
                   placeholder="Add Area"
                   components={{ ValueContainer }}
                   classNamePrefix="vyrill"
                   styles={halfWidthstyles}
                 />
-                {/* <input
-                  style={{ width: "49%" }}
-                  type="text"
-                  className="form-control"
-                  id="exampleFormControlInput1"
-                  placeholder="First Name"
-                /> */}
               </div>
             </div>
           </div>
@@ -430,22 +594,23 @@ const Properties = () => {
                 <input
                   type="text"
                   className="form-control"
-                  id="exampleFormControlInput1"
-                  //placeholder="First Name"
+                  id="formUnitRef"
+                  value={FormState.formUnitRef}
+                  onChange={handleFormChange}
                 />
               </div>
               <div className="col">
                 <label>Unit Type</label>
                 <select
                   className="form-control"
-                  //   style={{ width: "49%" }}
-                  name="area"
-                  id="area"
+                  onChange={handleFormChange}
+                  name="formUnitType"
+                  id="formUnitType"
                 >
                   <option value="">---</option>
-                  <option value="saab">Unit 1</option>
-                  <option value="opel">Unit 2</option>
-                  <option value="audi">Unit 3</option>
+                  <option value="Unit 1">Unit 1</option>
+                  <option value="Unit 2">Unit 2</option>
+                  <option value="Unit 3">Unit 3</option>
                 </select>
               </div>
             </div>
@@ -459,11 +624,12 @@ const Properties = () => {
             >
               <div className="col">
                 <label>Unit Owner *</label>
-
                 <Select
-                  options={customUnitOptions}
+                  options={CustomUnit}
+                  getOptionLabel={(options) => options.Name}
+                  getOptionValue={(options) => options.uuid}
                   isMulti={false}
-                  onChange={handleInfluencerName}
+                  onChange={changeUnitOwner}
                   // isSearchable={true}
                   // placeholder="Add property"
                   components={{ ValueContainer }}
@@ -475,13 +641,13 @@ const Properties = () => {
                 <label>Manager</label>
                 <select
                   className="form-control"
-                  //   style={{ width: "49%" }}
-                  name="area"
-                  id="area"
+                  onChange={handleFormChange}
+                  name="formManager"
+                  id="formManager"
                 >
-                  <option value="volvo">---</option>
-                  <option value="volvo">Manager 1</option>
-                  <option value="saab">Manager 2</option>
+                  <option value="">---</option>
+                  <option value="Manager 1">Manager 1</option>
+                  <option value="Manager 2">Manager 2</option>
                 </select>
               </div>
             </div>
@@ -498,23 +664,12 @@ const Properties = () => {
                 <input
                   type="text"
                   className="form-control"
-                  id="exampleFormControlInput1"
-                  //placeholder="First Name"
+                  id="formLettingAgent"
+                  value={FormState.formLettingAgent}
+                  onChange={handleFormChange}
                 />
               </div>
-              <div className="col">
-                {/* <label>Manager</label> */}
-                {/* <Select
-                options={influencers}
-                isMulti={false}
-                onChange={handleInfluencerName}
-                // isSearchable={true}
-                // placeholder="Add property"
-                components={{ ValueContainer }}
-                classNamePrefix="vyrill"
-                styles={styles}
-              /> */}
-              </div>
+              <div className="col"></div>
             </div>
           </div>
         </div>
@@ -535,7 +690,9 @@ const Properties = () => {
                   style={{ width: "49%" }}
                   type="text"
                   className="form-control"
-                  id="exampleFormControlInput1"
+                  id="formCertificateName"
+                  value={FormState.formCertificateName}
+                  onChange={handleFormChange}
                   placeholder="certifates Name"
                 />
               </div>
@@ -552,7 +709,7 @@ const Properties = () => {
               }}
             >
               <button className="btn btn-seconday">Cancel</button>
-              <button className="btn btn-primary" onClick={handleAddProperty}>
+              <button className="btn btn-primary" onClick={handleMainForm}>
                 Add Property
               </button>
             </div>
@@ -585,7 +742,9 @@ const Properties = () => {
               <input
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="partner_name"
+                value={PropertyModalState.partner_name}
+                onChange={handleChange}
               />
             </div>
             <div className="d-flex" style={{ marginBottom: "1rem" }}>
@@ -593,7 +752,9 @@ const Properties = () => {
               <input
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="primary_email"
+                value={PropertyModalState.primary_email}
+                onChange={handleChange}
               />
             </div>
             <div className="d-flex" style={{ marginBottom: "1rem" }}>
@@ -602,15 +763,19 @@ const Properties = () => {
                 style={{ width: "50%", marginRight: "1rem" }}
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="first_name"
                 placeholder="First Name"
+                value={PropertyModalState.first_name}
+                onChange={handleChange}
               />
               <input
                 style={{ width: "50%" }}
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="last_name"
                 placeholder="Last Name"
+                value={PropertyModalState.last_name}
+                onChange={handleChange}
               />
             </div>
             <div className="d-flex" style={{ marginBottom: "1rem" }}>
@@ -618,8 +783,9 @@ const Properties = () => {
               <input
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
-                // placeholder="First Name"
+                id="primary_phone"
+                value={PropertyModalState.primary_phone}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -628,7 +794,7 @@ const Properties = () => {
           <Button variant="secondary" onClick={handleClosePropery}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClosePropery}>
+          <Button variant="primary" onClick={handleAddProperty}>
             Save Changes
           </Button>
         </Modal.Footer>
@@ -659,7 +825,9 @@ const Properties = () => {
               <input
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="area"
+                value={AreaModalState.area}
+                onChange={handleAreaChange}
               />
             </div>
           </div>
@@ -668,7 +836,7 @@ const Properties = () => {
           <Button variant="secondary" onClick={handleCloseArea}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleCloseArea}>
+          <Button variant="primary" onClick={handleSubmitArea}>
             Save Area
           </Button>
         </Modal.Footer>
@@ -698,105 +866,171 @@ const Properties = () => {
               <input
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="Name"
+                value={CustomUnitModalState.Name}
+                onChange={handleCustomUnitChange}
               />
             </div>
             <div style={{ marginBottom: "1rem" }}>
               <label style={{ width: "25%" }}>Related Property Type</label>
               <div className="checkboxLebel">
-                <input
+                {/* <input
                   style={{ marginRight: "0.5rem" }}
                   type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
+                  id="type"
+                  value="All"
+                  //   value={CustomUnitModalState.type}
+                  onChange={handleCustomUnitCheck}
                 />
-                <label className="checkboxLebel" for="vehicle1">
+                <label className="checkboxLebel" for="type">
                   All
-                </label>
+                </label> */}
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    // defaultChecked
+                    id="type"
+                    value="All"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>All</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Resedential"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Resedential</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Commercial"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Commercial</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Mixed"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Mixed</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Industrial"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Industrial</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="HMO"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>HMO</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Land"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Land</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Water"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Water</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Formland"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Formland</span>
+                </div>
+                <div className="boxes">
+                  <input
+                    className="checkboxStyle"
+                    type="radio"
+                    name="type"
+                    id="type"
+                    value="Resedential Block"
+                    onChange={handleCustomUnitCheck}
+                  />
+                  <span>Resedential Block</span>
+                </div>
+                {/* <input
                 <input
                   style={{ margin: "0.5rem" }}
                   type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
+                  id="Water"
+                  value={CustomUnitModalState.type}
+                  onChange={handleCustomUnitChange}
                 />
-                <label for="vehicle1">Resedential</label>
+                <label for="Water"></label>
                 <input
                   style={{ margin: "0.5rem" }}
                   type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
+                  id="Formland"
+                  value={CustomUnitModalState.type}
+                  onChange={handleCustomUnitChange}
                 />
-
-                <label for="vehicle1">Commercial</label>
+                <label for="Formland"></label>
                 <input
                   style={{ margin: "0.5rem" }}
                   type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
+                  id="Resedential_Block"
+                  value={CustomUnitModalState.type}
+                  onChange={handleCustomUnitChange}
                 />
-                <label for="vehicle1">Mixed</label>
-                <input
-                  style={{ margin: "0.5rem" }}
-                  type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
-                />
-                <label for="vehicle1">Industrial</label>
-                <input
-                  style={{ margin: "0.5rem" }}
-                  type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
-                />
-                <label for="vehicle1">HMO</label>
-                <input
-                  style={{ margin: "0.5rem" }}
-                  type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
-                />
-                <label for="vehicle1">Land</label>
-                <input
-                  style={{ margin: "0.5rem" }}
-                  type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
-                />
-                <label for="vehicle1">Water</label>
-                <input
-                  style={{ margin: "0.5rem" }}
-                  type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
-                />
-                <label for="vehicle1">Formland</label>
-                <input
-                  style={{ margin: "0.5rem" }}
-                  type="checkbox"
-                  id="vehicle1"
-                  name="vehicle1"
-                  value="Bike"
-                />
-                <label for="vehicle1">Resedential Block</label>
+                <label for="Resedential_Block">Resedential Block</label> */}
               </div>
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseArea}>
+          <Button variant="secondary" onClick={handleCloseCustomUnit}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleCloseArea}>
-            Save Area
+          <Button variant="primary" onClick={handleSubmitCustomUnit}>
+            Submit
           </Button>
         </Modal.Footer>
       </Modal>

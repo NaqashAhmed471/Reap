@@ -1,4 +1,52 @@
-.checkboxLebel > label {
+.checkboxLebel {
+  display: table-cell;
+}
+.checkboxLebel > span {
   font-size: 14px;
   font-weight: 600 !important;
+}
+
+.boxes {
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.checkboxStyle {
+  height: 15px;
+  width: 15px;
+  margin-right: 0.5rem;
+}
+input[type="checkbox"] {
+  accent-color: #34a493;
+}
+.boxes > span {
+  font-family: "Urbanist";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  margin-right: 1rem;
+  text-transform: capitalize;
+}
+
+/********** styling for radio checkboxes *********/
+
+input[type="radio"] {
+  appearance: none;
+  background-color: #324ce4;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+input[type="radio"]:checked {
+  appearance: none;
+  border: none;
+}
+
+input[type="radio"]:checked::before {
+  width: 12px;
+  height: 12px;
+  color: #fff !important;
+  content: "\00A0\2713\00A0" !important;
 }

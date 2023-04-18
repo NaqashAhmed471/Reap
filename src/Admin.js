@@ -7,6 +7,7 @@ import Tasks from "./components/Tasks/Tasks";
 import LteNavbar from "./components/Navbar/LteNavbar";
 import SidebarLte from "./components/Sidebar/LteSidebar";
 import PropertyTable from "./pages/PropertyTable/PropertyTable";
+import Certificate from "./pages/Certificates/Certificate";
 
 const Admin = () => {
   const switchRoutes = () => {
@@ -18,6 +19,7 @@ const Admin = () => {
         <Route path="/tasks" element={<Tasks />}></Route>
         <Route path="/properties" element={<PropertyTable />}></Route>
         <Route path="/propertiesform" element={<Properties />}></Route>
+        <Route path="/certificates" element={<Certificate />}></Route>
       </Routes>
     );
   };
